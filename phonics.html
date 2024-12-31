@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Phonics Learning Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #333;
+    }
+    .button {
+      display: inline-block;
+      margin: 10px;
+      padding: 20px;
+      background-color: #f0a500;
+      border: none;
+      border-radius: 10px;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .button:hover {
+      background-color: #ff7f11;
+    }
+    .message {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    #score {
+      font-size: 20px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Learn Phonics!</h1>
+  <p id="instruction">Click the letter that makes this sound:</p>
+  <p id="phonics-sound" style="font-size: 28px; color: #007bff;">"Ah"</p>
+  <div id="buttons"></div>
+  <p id="message" class="message"></p>
+  <p id="score">Score: 0</p>
+
+  <script>
+    const instruction = document.getElementById('instruction');
+    const phonicsSound = document.getElementById('phonics-sound');
+    const buttonsContainer = document.getElementById('buttons');
+    const message = document.getElementById('message');
+    const scoreDisplay = document.getElementById('score');
+
+    // Map of letter sounds with corresponding audio files (can be replaced with actual audio URLs)
+    const phonicsMap = {
+      A: { sound: "Ah", audio: "https://www.soundjay.com/button/sounds/button-1.mp3" },
+      E: { sound: "Eh", audio: "https://www.soundjay.com/button/sounds/button-2.mp3" },
+      I: { sound: "Ih", audio: "https://www.soundjay.com/button/sounds/button-3.mp3" },
+      O: { sound: "Oh", audio: "https://www.soundjay.com/button/sounds/button-4.mp3" },
+      U: { sound: "Uh", audio: "https://www.soundjay.com/button/sounds/button-5.mp3" },
+      B: { sound: "Buh", audio: "https://www.soundjay.com/button/sounds/button-6.mp3" },
+      C: { sound: "Cuh", audio: "https://www.soundjay.com/button/sounds/button-7.mp3" },
+      // Add more consonants here...
+    };
+
+    // Variables for tracking the game state
+    let score = 0;
+    let currentLevel = "vowels";
+
+    // Get available letters based on the current level
+    const getAvailableLetters = () => {
+      if (currentLevel === "vowels") {
+        return ["A", "E", "I", "O", "U"];
+      } else {
+        return Object.keys(phonicsMap);
+      }
+    };
+
+    // Generate a random letter and its sound
+    const createGame = () => {
+      // Clear message and buttons
+      message.textContent = '';
+      buttonsContainer.innerHTML = '';
+
+      // Select a random letter and sound
+      const availableLetters = getAvailableLetters();
+      const targetLetter = availableLetters[Math.floor(Math.random() * availableLetters.length)];
+      const targetData = phonicsMap[targetLetter];
+
+      // Display the sound
+      phonicsSound.textContent = `"${targetData.sound}"`;
+
+      // Play the sound
+      const audio = new Audio(targetData.audio);
+      audio.play();
+
+      // Create 4 options (one correct, 3 random)
+      const options = new Set([targetLetter]);
+      while (options.size < 4) {
+        const randomLetter = availableLetters[Math.floor(Math.random() * availableLetters.length)];
+        options.add(randomLetter);
+      }
+
+      // Shuffle options
+      const shuffledOptions = Array.from(options).sort(() => Math.random() - 0.5);
+
+      // Generate buttons
+      shuffledOptions.forEach(letter => {
+        const button = document.createElement('button');
+        button.textContent = letter;
+        button.className = 'button';
+        button.onclick = () => {
+          if (letter === targetLetter) {
+            message.textContent = 'Correct! 🎉';
+            message.style.color = 'green';
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+
+            // Level up when score reaches 5
+            if (score === 5 && currentLevel === "vowels") {
+              currentLevel = "all";
+              alert("Great job! You've unlocked consonants!");
+            }
+
+            setTimeout(createGame, 1500); // Start new game after a short delay
+          } else {
+            message.textContent = 'Try again!';
+            message.style.color = 'red';
+          }
+        };
+        buttonsContainer.appendChild(button);
+      });
+    };
+
+    // Initialize the game
+    createGame();
+  </script>
+</body>
+</html>

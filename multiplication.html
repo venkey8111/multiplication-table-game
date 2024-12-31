@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiplication Table Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    .button { padding: 10px 20px; font-size: 20px; cursor: pointer; }
+    #score { font-size: 24px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Multiplication Table Game</h1>
+  <p id="question">What is 7 × 3?</p>
+  <div>
+    <button class="button" onclick="checkAnswer(21)">21</button>
+    <button class="button" onclick="checkAnswer(21)">21</button>
+    <button class="button" onclick="checkAnswer(92)">92</button>
+    <button class="button" onclick="checkAnswer(14)">14</button>
+  </div>
+  <p id="message" class="message"></p>
+  <p id="score">Score: 0</p>
+
+  <script>
+    let score = 0;
+    let correctAnswer;
+
+    // Function to generate a new question and options
+    function generateQuestion() {
+      const num1 = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+      const num2 = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+      correctAnswer = num1 * num2; // Correct answer for the multiplication
+
+      // Display the question
+      document.getElementById('question').textContent = `What is ${num1} × ${num2}?`;
+
+      // Shuffle options
+      const options = [correctAnswer, Math.floor(Math.random() * 100), Math.floor(Math.random() * 100), Math.floor(Math.random() * 100)];
+      options.sort(() => Math.random() - 0.5); // Shuffle options randomly
+
+      // Set the options on the buttons
+      const buttons = document.querySelectorAll('.button');
+      buttons.forEach((button, index) => {
+        button.textContent = options[index];
+        button.onclick = () => checkAnswer(options[index]);
+      });
+
+      // Clear the message
+      document.getElementById('message').textContent = '';
+    }
+
+    // Function to check the answer
+    function checkAnswer(userAnswer) {
+      if (userAnswer === correctAnswer) {
+        score++;
+        document.getElementById('message').textContent = 'Correct! 🎉';
+        document.getElementById('message').style.color = 'green';
+      } else {
+        document.getElementById('message').textContent = 'Try again!';
+        document.getElementById('message').style.color = 'red';
+      }
+
+      document.getElementById('score').textContent = `Score: ${score}`;
+
+      // Generate a new question after a short delay
+      setTimeout(generateQuestion, 1000); // 1-second delay before showing the next question
+    }
+
+    // Initialize the game by generating the first question
+    generateQuestion();
+  </script>
+</body>
+</html>
